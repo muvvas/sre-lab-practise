@@ -316,6 +316,29 @@ Or use a dedicated tool like `k6` or `hey` from your machine.
 5. Load test the stack and estimate practical local capacity.
 6. Translate the observations into a simple capacity plan.
 
+```md
+## Screenshots
+
+### Browser Control Panel
+![Browser Control Panel](docs/images/browser-control-panel.png)
+
+### Grafana Golden Signals
+![Grafana Golden Signals](docs/images/grafana-golden-signals.png)
+
+### Capacity Planning
+![Capacity Planning](docs/images/grafana-capacity-planning.png)
+
+### SLO and Error Budget
+![SLO and Error Budget](docs/images/grafana-slo-error-budget.png)
+
+### Jaeger Trace Waterfall View
+![Jaeger Trace Waterfall View](docs/images/jaeger-trace-view.png)
+
+### Dozzle Live Logs
+![Dozzle Live Logs](docs/images/dozzle-live-logs.png)
+
+```
+
 ## Included Dashboards
 
 Grafana now auto-loads:

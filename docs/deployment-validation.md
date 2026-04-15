@@ -4,11 +4,21 @@ This lab is designed for local deployment with Docker Desktop on Windows.
 
 ## 1. Build and Start
 
-From `C:\Users\smuvva\Documents\New project` run:
+From `C:\Users\smuvva\Documents\sre-lab-practise` run:
 
 ```powershell
 docker compose up --build -d
 ```
+
+Optional:
+
+- copy `.env.example` to `.env`
+- change ports or credentials before starting
+
+Cross-platform helpers:
+
+- Windows: `.\scripts\bootstrap.ps1`
+- Linux / macOS: `./scripts/bootstrap.sh`
 
 ## 2. Core URLs
 
@@ -64,10 +74,10 @@ Expected dashboards:
 ## 4. Guided Demo Validation
 
 1. Open [http://localhost:3001](http://localhost:3001).
-2. Start `Learn / Play Demo`.
+2. Use `Scheduled Runner` and pick an `Experiment Schedule`.
 3. Let it run for a few minutes.
-4. Stop the run.
-5. Download the JSON report with `Download Session Report`.
+4. Stop the run if needed, or let it complete.
+5. Export JSON, Markdown, or HTML from the session export controls.
 
 The report includes:
 
@@ -77,6 +87,12 @@ The report includes:
 - failures observed
 - sampled summaries over time
 - final success rate and p95 latency
+
+## 5a. Exact Fixed-Rate Load Tests
+
+For exact traffic like `100 req/sec`, use the terminal guide:
+
+- [manual-load-testing.md](C:/Users/smuvva/Documents/sre-lab-practise/docs/manual-load-testing.md)
 
 ## 5. Capacity Planning Workflow
 
@@ -141,3 +157,15 @@ If you change Grafana dashboard JSON:
 ```powershell
 docker compose restart grafana
 ```
+
+## 8. Reset The Lab
+
+Without deleting data:
+
+- Windows: `.\scripts\reset-lab.ps1`
+- Linux / macOS: `./scripts/reset-lab.sh`
+
+With Docker volumes removed:
+
+- Windows: `.\scripts\reset-lab.ps1 -RemoveVolumes`
+- Linux / macOS: `./scripts/reset-lab.sh --volumes`

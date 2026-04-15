@@ -57,3 +57,14 @@ Then a reasonable safe capacity might be around 30 to 35 requests/sec for this l
 ## Important Note For Local Labs
 
 Your numbers will reflect your laptop, Docker Desktop settings, and local background load. That is still useful. The goal is not perfect production realism. The goal is learning how to reason from signals to decisions.
+
+## 15-Minute Guided Exercise
+
+For a full reproducible walk-through, see:
+
+- [docs/15-minute-capacity-exercise.md](C:/Users/smuvva/Documents/sre-lab-practise/docs/15-minute-capacity-exercise.md)
+
+
+For exact repeatable request rates such as `100 req/sec`, use:
+
+- [docs/manual-load-testing.md](C:/Users/smuvva/Documents/sre-lab-practise/docs/manual-load-testing.md)

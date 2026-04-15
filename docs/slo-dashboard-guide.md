@@ -70,6 +70,12 @@ Or:
 k6 run --env SCENARIO=errors .\load-tests\sre-demo.js
 ```
 
+Or run an exact fixed-rate test from PowerShell:
+
+```powershell
+docker run --rm -i -v "${PWD}\load-tests:/scripts" grafana/k6 run /scripts/sre-demo.js --env BASE_URL=http://host.docker.internal:3001 --env SCENARIO=fixed --env PRESET=errors --env RATE=100 --env DURATION=1m
+```
+
 ### Latency SLO Violation
 
 Run:
@@ -84,6 +90,12 @@ Or:
 k6 run --env SCENARIO=latency .\load-tests\sre-demo.js
 ```
 
+Or run an exact fixed-rate test from PowerShell:
+
+```powershell
+docker run --rm -i -v "${PWD}\load-tests:/scripts" grafana/k6 run /scripts/sre-demo.js --env BASE_URL=http://host.docker.internal:3001 --env SCENARIO=fixed --env PRESET=latency --env RATE=100 --env DURATION=1m
+```
+
 ### Capacity Stress
 
 Run:
@@ -91,6 +103,14 @@ Run:
 ```powershell
 k6 run --env SCENARIO=stress .\load-tests\sre-demo.js
 ```
+
+Or run an exact fixed-rate test from PowerShell:
+
+```powershell
+docker run --rm -i -v "${PWD}\load-tests:/scripts" grafana/k6 run /scripts/sre-demo.js --env BASE_URL=http://host.docker.internal:3001 --env SCENARIO=fixed --env PRESET=stress --env RATE=100 --env DURATION=1m
+```
+
+For more fixed-rate variations, see [docs/manual-load-testing.md](C:/Users/smuvva/Documents/sre-lab-practise/docs/manual-load-testing.md).
 
 Then compare:
 

@@ -7,3 +7,4 @@ coverage/
 postgres_data/
 *.log
 Thumbs.db
+reports/

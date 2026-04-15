@@ -86,3 +86,10 @@ A single app helps with metrics and logs, but multiple apps help you learn:
 - Add Postgres and instrument queries
 - Add queue workers
 - Add autoscaling simulations
+
+
+## Traffic Generation In This Lab
+
+- Use the browser UI for guided learning, presets, and small bursts.
+- Use `k6` for exact repeatable traffic such as `100 req/sec`.
+- For terminal-driven fixed-rate commands, see [docs/manual-load-testing.md](C:/Users/smuvva/Documents/sre-lab-practise/docs/manual-load-testing.md).

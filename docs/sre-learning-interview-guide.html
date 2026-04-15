@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>SRE Learning and Interview Guide</title>
+    <style>
+      :root {
+        --ink: #1f2a2e;
+        --muted: #556368;
+        --accent: #b24a2d;
+        --accent-2: #2e6a63;
+        --paper: #fffdf8;
+        --line: #d9c8b1;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: var(--paper);
+        color: var(--ink);
+        line-height: 1.5;
+      }
+
+      .page {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 42px 36px 60px;
+      }
+
+      h1, h2, h3 {
+        margin-bottom: 8px;
+      }
+
+      h1 {
+        font-size: 34px;
+        line-height: 1.1;
+      }
+
+      h2 {
+        margin-top: 28px;
+        padding-top: 10px;
+        border-top: 1px solid var(--line);
+        color: var(--accent);
+      }
+
+      h3 {
+        margin-top: 18px;
+        color: var(--accent-2);
+      }
+
+      p, li {
+        font-size: 15px;
+      }
+
+      p.lead {
+        color: var(--muted);
+        font-size: 16px;
+      }
+
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 18px 0 24px;
+      }
+
+      .pill {
+        padding: 7px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: #f7efe2;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 16px 18px;
+        margin: 14px 0;
+        background: #fff;
+      }
+
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+
+      ul, ol {
+        margin-top: 8px;
+      }
+
+      code {
+        background: #f2ece4;
+        padding: 1px 5px;
+        border-radius: 6px;
+      }
+
+      @media print {
+        .page {
+          padding: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <h1>SRE Learning and Interview Guide</h1>
+      <p class="lead">
+        This guide uses the local SRE lab to build practical understanding of observability, SLI/SLOs,
+        alerting, resilience patterns, and observability-driven decision making.
+      </p>
+
+      <div class="pill-row">
+        <div class="pill">Golden Signals</div>
+        <div class="pill">SLO / SLI</div>
+        <div class="pill">Error Budgets</div>
+        <div class="pill">Alerting</div>
+        <div class="pill">Resilience</div>
+        <div class="pill">Capacity Planning</div>
+      </div>
+
+      <div class="panel">
+        <strong>System under test:</strong> <code>app-a -&gt; app-b -&gt; app-c -&gt; postgres</code><br />
+        <strong>Telemetry stack:</strong> Prometheus, Grafana, Loki, Tempo, Jaeger, Dozzle
+      </div>
+
+      <h2>1. Beginner to Advanced Path</h2>
+
+      <div class="two-col">
+        <div class="panel">
+          <h3>Beginner</h3>
+          <ul>
+            <li>Understand latency, traffic, errors, and saturation.</li>
+            <li>Learn the difference between logs, metrics, and traces.</li>
+            <li>Read the golden signals and SLO dashboards.</li>
+            <li>Understand what an SLI, SLO, and error budget mean.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Intermediate</h3>
+          <ul>
+            <li>Run guided load and capacity exercises.</li>
+            <li>Decide whether the bottleneck is app-tier or DB-tier.</li>
+            <li>Interpret alert rules and budget burn.</li>
+            <li>Use retries, timeouts, circuit breaking, and fallbacks.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Advanced</h3>
+        <ul>
+          <li>Build incident narratives from telemetry.</li>
+          <li>Design meaningful SLIs and production-style SLOs.</li>
+          <li>Use observability to justify scaling, tuning, or mitigation decisions.</li>
+          <li>Explain tradeoffs between reliability, performance, and cost.</li>
+        </ul>
+      </div>
+
+      <h2>2. Core SRE Concepts</h2>
+
+      <div class="panel">
+        <h3>Golden Signals</h3>
+        <ul>
+          <li><strong>Latency:</strong> How long requests take.</li>
+          <li><strong>Traffic:</strong> How many requests the system handles.</li>
+          <li><strong>Errors:</strong> How often requests fail.</li>
+          <li><strong>Saturation:</strong> How close the system is to exhaustion.</li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <h3>SLI / SLO / Error Budget</h3>
+        <ul>
+          <li><strong>SLI:</strong> A measured indicator such as success ratio or latency under a threshold.</li>
+          <li><strong>SLO:</strong> A target such as 99 percent availability.</li>
+          <li><strong>Error Budget:</strong> The amount of failure or slowness you can spend before breaching the SLO.</li>
+        </ul>
+      </div>
+
+      <h2>3. Dashboard Reading Guide</h2>
+
+      <div class="panel">
+        <h3>SRE Golden Signals</h3>
+        <p>Use this dashboard to see whether requests are slow, failing, or causing app runtime pressure.</p>
+      </div>
+
+      <div class="panel">
+        <h3>SLO and Error Budget</h3>
+        <p>Use this dashboard to understand whether the system is meeting the target and how fast budget is burning.</p>
+      </div>
+
+      <div class="panel">
+        <h3>Database Health</h3>
+        <p>Use this dashboard to verify whether DB latency, backends, or connection pressure are the main cause of end-to-end slowdown.</p>
+      </div>
+
+      <div class="panel">
+        <h3>Capacity Planning</h3>
+        <p>Use this dashboard to compare throughput, p95 latency, error ratio, event loop utilization, and DB saturation signals.</p>
+      </div>
+
+      <h2>4. Alerting</h2>
+
+      <div class="panel">
+        <p>The lab includes alert rules for:</p>
+        <ul>
+          <li>App latency SLO breach</li>
+          <li>Fast error-budget burn</li>
+          <li>Database latency</li>
+          <li>Database connection pressure</li>
+          <li>Resilience activity such as fallbacks and circuit openings</li>
+        </ul>
+      </div>
+
+      <h2>5. Resilience Patterns</h2>
+
+      <div class="panel">
+        <ul>
+          <li><strong>Timeouts:</strong> Stop waiting forever on a slow dependency.</li>
+          <li><strong>Retries:</strong> Recover from transient failures carefully.</li>
+          <li><strong>Circuit breaker:</strong> Stop hammering an unhealthy dependency.</li>
+          <li><strong>Fallback:</strong> Return a degraded but useful response when full success is not possible.</li>
+        </ul>
+      </div>
+
+      <h2>6. Observability-Driven Decisions</h2>
+
+      <div class="panel">
+        <p>Examples from this lab:</p>
+        <ul>
+          <li>High app latency with low event loop saturation and high DB latency points to the database tier.</li>
+          <li>High app latency with high event loop saturation and healthy DB suggests app-tier scaling or tuning.</li>
+          <li>Rising error rate plus circuit-breaker activity suggests dependency instability.</li>
+        </ul>
+      </div>
+
+      <h2>7. Capacity Planning Logic</h2>
+
+      <div class="panel">
+        <p>Good capacity planning asks:</p>
+        <ul>
+          <li>What throughput can the system sustain while still meeting the SLO?</li>
+          <li>What saturates first?</li>
+          <li>When does scaling help?</li>
+          <li>When does tuning help more than scaling?</li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <h3>Typical decision rules in this lab</h3>
+        <ul>
+          <li>Scale app containers first when latency and errors rise with app runtime saturation while DB metrics remain healthy.</li>
+          <li>Fix or scale the DB tier first when DB query p95, held connections, or Postgres backends rise before app saturation.</li>
+        </ul>
+      </div>
+
+      <h2>8. Interview Questions</h2>
+
+      <div class="panel">
+        <ul>
+          <li>What are the four golden signals?</li>
+          <li>What is the difference between an SLI and an SLO?</li>
+          <li>When would you use traces instead of metrics?</li>
+          <li>How do you know a database is the bottleneck?</li>
+          <li>When can retries make incidents worse?</li>
+          <li>What makes a good alert?</li>
+          <li>How do you decide whether to scale horizontally?</li>
+        </ul>
+      </div>
+
+      <h2>9. Strong Interview Answer Pattern</h2>
+
+      <div class="panel">
+        <ol>
+          <li>State the symptom clearly.</li>
+          <li>Name the first dashboards or signals you would check.</li>
+          <li>Describe how you would confirm the bottleneck.</li>
+          <li>Give the immediate mitigation.</li>
+          <li>Give the long-term fix.</li>
+        </ol>
+      </div>
+
+      <h2>10. Practice Routine</h2>
+
+      <div class="panel">
+        <ol>
+          <li>Run a baseline scenario and explain each dashboard aloud.</li>
+          <li>Run a slow DB or pool stress scenario.</li>
+          <li>Predict the bottleneck before opening Jaeger.</li>
+          <li>Use logs and traces to confirm your hypothesis.</li>
+          <li>Choose whether to scale, tune, or mitigate.</li>
+          <li>Summarize the incident in 2 to 3 minutes like an interview answer.</li>
+        </ol>
+      </div>
+    </div>
+  </body>
+</html>

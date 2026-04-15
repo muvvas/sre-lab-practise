@@ -7,12 +7,18 @@ services:
       APP_NAME: app-a
       PORT: 3000
       DOWNSTREAM_URL: http://app-b:3000/api/work
+      PROMETHEUS_URL: http://prometheus:9090
+      GRAFANA_URL: http://grafana:3000
+      GRAFANA_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GRAFANA_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      REPORTS_DIR: /var/lib/sre-reports
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       LOG_FILE: /var/log/app/app-a.log
     ports:
-      - "3001:3000"
+      - "${APP_A_PORT:-3001}:3000"
     volumes:
       - app_logs:/var/log/app
+      - ${REPORTS_HOST_DIR:-./reports}:/var/lib/sre-reports
     depends_on:
       - app-b
       - otel-collector
@@ -25,10 +31,14 @@ services:
       APP_NAME: app-b
       PORT: 3000
       DOWNSTREAM_URL: http://app-c:3000/api/data
+      RESILIENCE_TIMEOUT_MS: 800
+      RESILIENCE_RETRY_COUNT: 1
+      CIRCUIT_FAILURE_THRESHOLD: 4
+      CIRCUIT_OPEN_MS: 15000
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       LOG_FILE: /var/log/app/app-b.log
     ports:
-      - "3002:3000"
+      - "${APP_B_PORT:-3002}:3000"
     volumes:
       - app_logs:/var/log/app
     depends_on:
@@ -42,12 +52,12 @@ services:
     environment:
       APP_NAME: app-c
       PORT: 3000
-      DATABASE_URL: postgres://sre:sre@postgres:5432/srelab
-      DB_POOL_MAX: 5
+      DATABASE_URL: postgres://${POSTGRES_USER:-sre}:${POSTGRES_PASSWORD:-sre}@postgres:5432/${POSTGRES_DB:-srelab}
+      DB_POOL_MAX: ${DB_POOL_MAX:-5}
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       LOG_FILE: /var/log/app/app-c.log
     ports:
-      - "3003:3000"
+      - "${APP_C_PORT:-3003}:3000"
     volumes:
       - app_logs:/var/log/app
     depends_on:
@@ -58,22 +68,22 @@ services:
     image: postgres:17-alpine
     container_name: sre-lab-postgres
     environment:
-      POSTGRES_DB: srelab
-      POSTGRES_USER: sre
-      POSTGRES_PASSWORD: sre
+      POSTGRES_DB: ${POSTGRES_DB:-srelab}
+      POSTGRES_USER: ${POSTGRES_USER:-sre}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sre}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
 
   postgres-exporter:
     image: prometheuscommunity/postgres-exporter:v0.17.1
     container_name: sre-lab-postgres-exporter
     environment:
-      DATA_SOURCE_NAME: postgres://sre:sre@postgres:5432/srelab?sslmode=disable
+      DATA_SOURCE_NAME: postgres://${POSTGRES_USER:-sre}:${POSTGRES_PASSWORD:-sre}@postgres:5432/${POSTGRES_DB:-srelab}?sslmode=disable
     ports:
-      - "9187:9187"
+      - "${POSTGRES_EXPORTER_PORT:-9187}:9187"
     depends_on:
       - postgres
 
@@ -85,9 +95,9 @@ services:
       - ./otel/collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
       - app_logs:/var/log/app:ro
     ports:
-      - "4317:4317"
-      - "4318:4318"
-      - "9464:9464"
+      - "${OTEL_GRPC_PORT:-4317}:4317"
+      - "${OTEL_HTTP_PORT:-4318}:4318"
+      - "${OTEL_METRICS_PORT:-9464}:9464"
     depends_on:
       - tempo
       - loki
@@ -99,8 +109,9 @@ services:
       - "--config.file=/etc/prometheus/prometheus.yml"
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/rules:/etc/prometheus/rules:ro
     ports:
-      - "9090:9090"
+      - "${PROMETHEUS_PORT:-9090}:9090"
     depends_on:
       - otel-collector
       - postgres-exporter
@@ -112,7 +123,7 @@ services:
     volumes:
       - ./loki/config.yml:/etc/loki/local-config.yaml:ro
     ports:
-      - "3100:3100"
+      - "${LOKI_PORT:-3100}:3100"
 
   tempo:
     image: grafana/tempo:2.8.2
@@ -121,7 +132,7 @@ services:
     volumes:
       - ./tempo/tempo.yaml:/etc/tempo.yaml:ro
     ports:
-      - "3200:3200"
+      - "${TEMPO_PORT:-3200}:3200"
 
   jaeger:
     image: jaegertracing/all-in-one:1.65.0
@@ -129,8 +140,8 @@ services:
     environment:
       COLLECTOR_OTLP_ENABLED: "true"
     ports:
-      - "16686:16686"
-      - "4319:4317"
+      - "${JAEGER_UI_PORT:-16686}:16686"
+      - "${JAEGER_OTLP_PORT:-4319}:4317"
 
   dozzle:
     image: amir20/dozzle:v8.14.7
@@ -138,19 +149,19 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
-      - "8080:8080"
+      - "${DOZZLE_PORT:-8080}:8080"
 
   grafana:
     image: grafana/grafana:12.0.2
     container_name: sre-lab-grafana
     environment:
-      GF_SECURITY_ADMIN_USER: admin
-      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
       - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
     ports:
-      - "3000:3000"
+      - "${GRAFANA_PORT:-3000}:3000"
     depends_on:
       - jaeger
       - postgres-exporter
@@ -161,3 +172,4 @@ services:
 volumes:
   app_logs:
   postgres_data:
+

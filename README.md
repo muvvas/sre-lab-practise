@@ -85,18 +85,9 @@ flowchart LR
 2. Copy `.env.example` to `.env` if you want custom ports, credentials, or report path overrides.
 3. From this folder, run:
 
-PowerShell:
-
 ```powershell
 docker compose up --build
 ```
-
-Bash:
-
-```bash
-docker compose up --build
-```
-
 Cross-platform bootstrap scripts:
 
 - Windows PowerShell:
@@ -153,7 +144,6 @@ To simulate deeper dependency latency:
 ```powershell
 curl "http://localhost:3001/api/demo?dependencyLatencyMs=120"
 ```
-
 ## Screenshots
 
 ### Browser Control Panel

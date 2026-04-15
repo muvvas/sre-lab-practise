@@ -17,12 +17,20 @@ Use `k6` when you want to:
 - compare repeatable load-test results
 - study capacity or SLO behavior under controlled pressure
 
-## Run From This Folder
+## Run From Your Local Repo Folder
 
-Use PowerShell from:
+Run commands from the root of this repository.
+
+PowerShell example:
 
 ```powershell
-C:\Users\smuvva\Documents\sre-lab-practise
+cd path\to\sre-lab-practise
+```
+
+Bash example:
+
+```bash
+cd /path/to/sre-lab-practise
 ```
 
 ## Quick Cheatsheet
@@ -35,26 +43,58 @@ If you just want copy-paste commands, start here:
 
 ### Baseline for 1 Minute
 
+PowerShell:
+
 ```powershell
 docker run --rm -i -v "${PWD}\load-tests:/scripts" grafana/k6 run /scripts/sre-demo.js --env BASE_URL=http://host.docker.internal:3001 --env SCENARIO=fixed --env PRESET=baseline --env RATE=100 --env DURATION=1m
 ```
 
+Bash:
+
+```bash
+docker run --rm -i -v "$(pwd)/load-tests:/scripts" grafana/k6 run /scripts/sre-demo.js --env BASE_URL=http://host.docker.internal:3001 --env SCENARIO=fixed --env PRESET=baseline --env RATE=100 --env DURATION=1m
+```
+
 ### Retry Storm for 1 Minute
+
+PowerShell:
 
 ```powershell
 docker run --rm -i -v "${PWD}\load-tests:/scripts" grafana/k6 run /scripts/sre-demo.js --env BASE_URL=http://host.docker.internal:3001 --env SCENARIO=fixed --env PRESET=retry-storm --env RATE=100 --env DURATION=1m
 ```
 
+Bash:
+
+```bash
+docker run --rm -i -v "$(pwd)/load-tests:/scripts" grafana/k6 run /scripts/sre-demo.js --env BASE_URL=http://host.docker.internal:3001 --env SCENARIO=fixed --env PRESET=retry-storm --env RATE=100 --env DURATION=1m
+```
+
 ### DB Saturation for 1 Minute
+
+PowerShell:
 
 ```powershell
 docker run --rm -i -v "${PWD}\load-tests:/scripts" grafana/k6 run /scripts/sre-demo.js --env BASE_URL=http://host.docker.internal:3001 --env SCENARIO=fixed --env PRESET=db-saturation --env RATE=100 --env DURATION=1m
 ```
 
+Bash:
+
+```bash
+docker run --rm -i -v "$(pwd)/load-tests:/scripts" grafana/k6 run /scripts/sre-demo.js --env BASE_URL=http://host.docker.internal:3001 --env SCENARIO=fixed --env PRESET=db-saturation --env RATE=100 --env DURATION=1m
+```
+
 ### Stress Blend for 1 Minute
+
+PowerShell:
 
 ```powershell
 docker run --rm -i -v "${PWD}\load-tests:/scripts" grafana/k6 run /scripts/sre-demo.js --env BASE_URL=http://host.docker.internal:3001 --env SCENARIO=fixed --env PRESET=stress --env RATE=100 --env DURATION=1m
+```
+
+Bash:
+
+```bash
+docker run --rm -i -v "$(pwd)/load-tests:/scripts" grafana/k6 run /scripts/sre-demo.js --env BASE_URL=http://host.docker.internal:3001 --env SCENARIO=fixed --env PRESET=stress --env RATE=100 --env DURATION=1m
 ```
 
 ## Custom Fixed-Rate Run

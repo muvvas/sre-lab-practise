@@ -85,7 +85,15 @@ flowchart LR
 2. Copy `.env.example` to `.env` if you want custom ports, credentials, or report path overrides.
 3. From this folder, run:
 
+PowerShell:
+
 ```powershell
+docker compose up --build
+```
+
+Bash:
+
+```bash
 docker compose up --build
 ```
 
@@ -129,25 +137,57 @@ Use `app-a` as the entry point:
 
 Example:
 
+PowerShell:
+
 ```powershell
+curl "http://localhost:3001/api/demo?items=3&latencyMs=100"
+```
+
+Bash:
+
+```bash
 curl "http://localhost:3001/api/demo?items=3&latencyMs=100"
 ```
 
 To simulate failures:
 
+PowerShell:
+
 ```powershell
+curl "http://localhost:3001/api/demo?failureRate=0.4"
+```
+
+Bash:
+
+```bash
 curl "http://localhost:3001/api/demo?failureRate=0.4"
 ```
 
 To simulate extra CPU work:
 
+PowerShell:
+
 ```powershell
+curl "http://localhost:3001/api/demo?cpuMs=150"
+```
+
+Bash:
+
+```bash
 curl "http://localhost:3001/api/demo?cpuMs=150"
 ```
 
 To simulate deeper dependency latency:
 
+PowerShell:
+
 ```powershell
+curl "http://localhost:3001/api/demo?dependencyLatencyMs=120"
+```
+
+Bash:
+
+```bash
 curl "http://localhost:3001/api/demo?dependencyLatencyMs=120"
 ```
 
@@ -155,10 +195,12 @@ curl "http://localhost:3001/api/demo?dependencyLatencyMs=120"
 
 For exact fixed-rate traffic like `100 req/sec`, use the dedicated guide:
 
-- [docs/manual-load-testing.md](C:/Users/smuvva/Documents/sre-lab-practise/docs/manual-load-testing.md)
-- [docs/load-testing-cheatsheet.md](C:/Users/smuvva/Documents/sre-lab-practise/docs/load-testing-cheatsheet.md)
+- [docs/manual-load-testing.md](docs/manual-load-testing.md)
+- [docs/load-testing-cheatsheet.md](docs/load-testing-cheatsheet.md)
 
-Most common exact `100 req/sec` runs from PowerShell in `C:\Users\smuvva\Documents\sre-lab-practise`:
+Most common exact `100 req/sec` runs:
+
+PowerShell:
 
 ```powershell
 docker run --rm -i -v "${PWD}\load-tests:/scripts" grafana/k6 run /scripts/sre-demo.js --env BASE_URL=http://host.docker.internal:3001 --env SCENARIO=fixed --env PRESET=baseline --env RATE=100 --env DURATION=1m
@@ -172,21 +214,53 @@ docker run --rm -i -v "${PWD}\load-tests:/scripts" grafana/k6 run /scripts/sre-d
 docker run --rm -i -v "${PWD}\load-tests:/scripts" grafana/k6 run /scripts/sre-demo.js --env BASE_URL=http://host.docker.internal:3001 --env SCENARIO=fixed --env PRESET=db-saturation --env RATE=100 --env DURATION=1m
 ```
 
+Bash:
+
+```bash
+docker run --rm -i -v "$(pwd)/load-tests:/scripts" grafana/k6 run /scripts/sre-demo.js --env BASE_URL=http://host.docker.internal:3001 --env SCENARIO=fixed --env PRESET=baseline --env RATE=100 --env DURATION=1m
+```
+
+```bash
+docker run --rm -i -v "$(pwd)/load-tests:/scripts" grafana/k6 run /scripts/sre-demo.js --env BASE_URL=http://host.docker.internal:3001 --env SCENARIO=fixed --env PRESET=retry-storm --env RATE=100 --env DURATION=1m
+```
+
+```bash
+docker run --rm -i -v "$(pwd)/load-tests:/scripts" grafana/k6 run /scripts/sre-demo.js --env BASE_URL=http://host.docker.internal:3001 --env SCENARIO=fixed --env PRESET=db-saturation --env RATE=100 --env DURATION=1m
+```
+
 Use the browser UI for interactive learning. Use `k6` for exact request-rate tests.
 
 `k6` script:
+
+PowerShell:
 
 ```powershell
 k6 run .\load-tests\sre-demo.js
 ```
 
+Bash:
+
+```bash
+k6 run ./load-tests/sre-demo.js
+```
+
 Docker-based `k6` run if you do not want a local install:
+
+PowerShell:
 
 ```powershell
 docker run --rm -i -v "${PWD}\load-tests:/scripts" grafana/k6 run /scripts/sre-demo.js --env BASE_URL=http://host.docker.internal:3001 --env SCENARIO=baseline
 ```
 
+Bash:
+
+```bash
+docker run --rm -i -v "$(pwd)/load-tests:/scripts" grafana/k6 run /scripts/sre-demo.js --env BASE_URL=http://host.docker.internal:3001 --env SCENARIO=baseline
+```
+
 Scenario examples:
+
+PowerShell:
 
 ```powershell
 k6 run --env SCENARIO=baseline .\load-tests\sre-demo.js
@@ -195,10 +269,27 @@ k6 run --env SCENARIO=errors .\load-tests\sre-demo.js
 k6 run --env SCENARIO=stress .\load-tests\sre-demo.js
 ```
 
+Bash:
+
+```bash
+k6 run --env SCENARIO=baseline ./load-tests/sre-demo.js
+k6 run --env SCENARIO=latency ./load-tests/sre-demo.js
+k6 run --env SCENARIO=errors ./load-tests/sre-demo.js
+k6 run --env SCENARIO=stress ./load-tests/sre-demo.js
+```
+
 Quick smoke test:
+
+PowerShell:
 
 ```powershell
 k6 run --env SCENARIO=baseline --env QUICK=1 .\load-tests\sre-demo.js
+```
+
+Bash:
+
+```bash
+k6 run --env SCENARIO=baseline --env QUICK=1 ./load-tests/sre-demo.js
 ```
 
 Basic PowerShell loop if you do not want to install `k6`:
@@ -257,15 +348,15 @@ Dedicated UIs:
 
 Deployment and validation steps are documented in:
 
-- [docs/deployment-validation.md](C:/Users/smuvva/Documents/sre-lab-practise/docs/deployment-validation.md)
-- [docs/15-minute-capacity-exercise.md](C:/Users/smuvva/Documents/sre-lab-practise/docs/15-minute-capacity-exercise.md)
-- [docs/sre-learning-path.md](C:/Users/smuvva/Documents/sre-lab-practise/docs/sre-learning-path.md)
-- [docs/roadmap-v2-v4.md](C:/Users/smuvva/Documents/sre-lab-practise/docs/roadmap-v2-v4.md)
-- [docs/sre-learning-interview-guide.md](C:/Users/smuvva/Documents/sre-lab-practise/docs/sre-learning-interview-guide.md)
-- [docs/incident-runbook.md](C:/Users/smuvva/Documents/sre-lab-practise/docs/incident-runbook.md)
-- [docs/services-overview.md](C:/Users/smuvva/Documents/sre-lab-practise/docs/services-overview.md)
-- [docs/dashboard-panel-guide.md](C:/Users/smuvva/Documents/sre-lab-practise/docs/dashboard-panel-guide.md)
-- [docs/manual-load-testing.md](C:/Users/smuvva/Documents/sre-lab-practise/docs/manual-load-testing.md)
+- [docs/deployment-validation.md](docs/deployment-validation.md)
+- [docs/15-minute-capacity-exercise.md](docs/15-minute-capacity-exercise.md)
+- [docs/sre-learning-path.md](docs/sre-learning-path.md)
+- [docs/roadmap-v2-v4.md](docs/roadmap-v2-v4.md)
+- [docs/sre-learning-interview-guide.md](docs/sre-learning-interview-guide.md)
+- [docs/incident-runbook.md](docs/incident-runbook.md)
+- [docs/services-overview.md](docs/services-overview.md)
+- [docs/dashboard-panel-guide.md](docs/dashboard-panel-guide.md)
+- [docs/manual-load-testing.md](docs/manual-load-testing.md)
 
 ## Session Report Export
 
@@ -274,10 +365,18 @@ After a scheduled run or guided experiment, you can export:
 - JSON from the browser UI
 - Markdown from the browser UI
 - HTML from the browser UI
-- PDF with the PowerShell script:
+- PDF with the export script:
+
+PowerShell:
 
 ```powershell
 .\scripts\export-session-report.ps1 -Pdf
+```
+
+Linux / macOS shell:
+
+```bash
+python3 -m webbrowser "http://localhost:3001/api/session-report/latest/html"
 ```
 
 This creates files in `.\reports`.
@@ -300,7 +399,7 @@ Examples:
 
 Start from:
 
-- [.env.example](C:/Users/smuvva/Documents/sre-lab-practise/.env.example)
+- [.env.example](.env.example)
 
 This makes the setup easier to reuse across:
 
@@ -312,7 +411,15 @@ This makes the setup easier to reuse across:
 
 If you `git pull` and start the stack again, the application setup comes from code and should work automatically after:
 
+PowerShell:
+
 ```powershell
+docker compose up --build -d
+```
+
+Bash:
+
+```bash
 docker compose up --build -d
 ```
 
@@ -354,7 +461,7 @@ So:
 
 Use the dedicated guide here:
 
-- [docs/15-minute-capacity-exercise.md](C:/Users/smuvva/Documents/sre-lab-practise/docs/15-minute-capacity-exercise.md)
+- [docs/15-minute-capacity-exercise.md](docs/15-minute-capacity-exercise.md)
 
 That guide explains:
 
@@ -375,10 +482,10 @@ That guide explains:
 - Queue-based workloads
 - Database dependency simulation
 
-## About Sandbox vs Local Machine
+## Local Machine Note
 
-This project is created in your local workspace at:
+This project is intended to run on your local machine.
 
-`C:\Users\smuvva\Documents\sre-lab-practise`
-
-The files are on your local machine. Containers started with Docker Desktop also run on your machine. In short: yes, this is a local setup, not a remote lab.
+- The repository files live in your local workspace after you clone it.
+- Containers started with Docker Desktop or Docker Engine also run locally.
+- This is a local lab setup, not a hosted or remote environment.

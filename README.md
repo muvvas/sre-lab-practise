@@ -190,7 +190,25 @@ Bash:
 ```bash
 curl "http://localhost:3001/api/demo?dependencyLatencyMs=120"
 ```
+## Screenshots
 
+### Browser Control Panel
+![Browser Control Panel](./docs/images/browser-control-panel.png)
+
+### Grafana Golden Signals
+![Grafana Golden Signals](./docs/images/grafana-golden-signals.png)
+
+### Capacity Planning
+![Capacity Planning](./docs/images/grafana-capacity-planning.png)
+
+### SLO and Error Budget
+![SLO and Error Budget](./docs/images/grafana-slo-error-budget.png)
+
+### Jaeger Trace Waterfall View
+![Jaeger Trace Waterfall View](./docs/images/jaeger-trace-view.png)
+
+### Dozzle Live Logs
+![Dozzle Live Logs](./docs/images/dozzle-live-logs.png)
 ## Load Testing
 
 For exact fixed-rate traffic like `100 req/sec`, use the dedicated guide:
@@ -315,29 +333,6 @@ Or use a dedicated tool like `k6` or `hey` from your machine.
 4. Define an SLI/SLO target and observe whether the system meets it.
 5. Load test the stack and estimate practical local capacity.
 6. Translate the observations into a simple capacity plan.
-
-```md
-## Screenshots
-
-### Browser Control Panel
-![Browser Control Panel](docs/images/browser-control-panel.png)
-
-### Grafana Golden Signals
-![Grafana Golden Signals](docs/images/grafana-golden-signals.png)
-
-### Capacity Planning
-![Capacity Planning](docs/images/grafana-capacity-planning.png)
-
-### SLO and Error Budget
-![SLO and Error Budget](docs/images/grafana-slo-error-budget.png)
-
-### Jaeger Trace Waterfall View
-![Jaeger Trace Waterfall View](docs/images/jaeger-trace-view.png)
-
-### Dozzle Live Logs
-![Dozzle Live Logs](docs/images/dozzle-live-logs.png)
-
-```
 
 ## Included Dashboards
 

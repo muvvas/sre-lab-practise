@@ -1,0 +1,163 @@
+services:
+  app-a:
+    build:
+      context: ./services/app-a
+    container_name: sre-lab-app-a
+    environment:
+      APP_NAME: app-a
+      PORT: 3000
+      DOWNSTREAM_URL: http://app-b:3000/api/work
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      LOG_FILE: /var/log/app/app-a.log
+    ports:
+      - "3001:3000"
+    volumes:
+      - app_logs:/var/log/app
+    depends_on:
+      - app-b
+      - otel-collector
+
+  app-b:
+    build:
+      context: ./services/app-b
+    container_name: sre-lab-app-b
+    environment:
+      APP_NAME: app-b
+      PORT: 3000
+      DOWNSTREAM_URL: http://app-c:3000/api/data
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      LOG_FILE: /var/log/app/app-b.log
+    ports:
+      - "3002:3000"
+    volumes:
+      - app_logs:/var/log/app
+    depends_on:
+      - app-c
+      - otel-collector
+
+  app-c:
+    build:
+      context: ./services/app-c
+    container_name: sre-lab-app-c
+    environment:
+      APP_NAME: app-c
+      PORT: 3000
+      DATABASE_URL: postgres://sre:sre@postgres:5432/srelab
+      DB_POOL_MAX: 5
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      LOG_FILE: /var/log/app/app-c.log
+    ports:
+      - "3003:3000"
+    volumes:
+      - app_logs:/var/log/app
+    depends_on:
+      - postgres
+      - otel-collector
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: sre-lab-postgres
+    environment:
+      POSTGRES_DB: srelab
+      POSTGRES_USER: sre
+      POSTGRES_PASSWORD: sre
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.17.1
+    container_name: sre-lab-postgres-exporter
+    environment:
+      DATA_SOURCE_NAME: postgres://sre:sre@postgres:5432/srelab?sslmode=disable
+    ports:
+      - "9187:9187"
+    depends_on:
+      - postgres
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: sre-lab-otel-collector
+    command: ["--config=/etc/otelcol-contrib/config.yaml"]
+    volumes:
+      - ./otel/collector-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+      - app_logs:/var/log/app:ro
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "9464:9464"
+    depends_on:
+      - tempo
+      - loki
+
+  prometheus:
+    image: prom/prometheus:v3.4.0
+    container_name: sre-lab-prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      - otel-collector
+      - postgres-exporter
+
+  loki:
+    image: grafana/loki:3.5.0
+    container_name: sre-lab-loki
+    command: ["-config.file=/etc/loki/local-config.yaml"]
+    volumes:
+      - ./loki/config.yml:/etc/loki/local-config.yaml:ro
+    ports:
+      - "3100:3100"
+
+  tempo:
+    image: grafana/tempo:2.8.2
+    container_name: sre-lab-tempo
+    command: ["-config.file=/etc/tempo.yaml"]
+    volumes:
+      - ./tempo/tempo.yaml:/etc/tempo.yaml:ro
+    ports:
+      - "3200:3200"
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.65.0
+    container_name: sre-lab-jaeger
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "16686:16686"
+      - "4319:4317"
+
+  dozzle:
+    image: amir20/dozzle:v8.14.7
+    container_name: sre-lab-dozzle
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8080:8080"
+
+  grafana:
+    image: grafana/grafana:12.0.2
+    container_name: sre-lab-grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+    depends_on:
+      - jaeger
+      - postgres-exporter
+      - prometheus
+      - loki
+      - tempo
+
+volumes:
+  app_logs:
+  postgres_data:

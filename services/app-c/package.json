@@ -1,0 +1,22 @@
+{
+  "name": "sre-lab-app-c",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.61.0",
+    "@opentelemetry/exporter-metrics-otlp-http": "^0.204.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.204.0",
+    "@opentelemetry/resources": "^2.0.1",
+    "@opentelemetry/sdk-metrics": "^2.1.0",
+    "@opentelemetry/sdk-node": "^0.204.0",
+    "@opentelemetry/semantic-conventions": "^1.37.0",
+    "express": "^4.21.2"
+    ,
+    "pg": "^8.16.3"
+  }
+}

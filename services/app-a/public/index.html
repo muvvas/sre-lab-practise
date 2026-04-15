@@ -1,0 +1,698 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SRE Learning Lab</title>
+    <style>
+      :root {
+        --bg: #f4efe7;
+        --panel: #fffaf2;
+        --panel-strong: #f0e2cf;
+        --ink: #1f2a2e;
+        --muted: #5e6b6f;
+        --accent: #b24a2d;
+        --accent-2: #2e6a63;
+        --border: #d9c8b1;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(178, 74, 45, 0.16), transparent 34%),
+          radial-gradient(circle at bottom right, rgba(46, 106, 99, 0.2), transparent 30%),
+          var(--bg);
+        color: var(--ink);
+      }
+
+      .shell {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 32px 20px 48px;
+      }
+
+      .hero {
+        background: linear-gradient(140deg, rgba(255, 250, 242, 0.95), rgba(240, 226, 207, 0.95));
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 28px;
+        box-shadow: 0 18px 50px rgba(31, 42, 46, 0.08);
+      }
+
+      .eyebrow {
+        color: var(--accent);
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+
+      h1 {
+        margin: 8px 0 10px;
+        font-size: clamp(2rem, 4vw, 3.4rem);
+        line-height: 1.05;
+      }
+
+      .hero p {
+        max-width: 760px;
+        font-size: 1rem;
+        color: var(--muted);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 18px;
+        margin-top: 22px;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow: 0 12px 28px rgba(31, 42, 46, 0.05);
+      }
+
+      .card h2 {
+        margin-top: 0;
+        font-size: 1.1rem;
+      }
+
+      label {
+        display: block;
+        margin: 12px 0 6px;
+        font-size: 0.92rem;
+        font-weight: 600;
+      }
+
+      input, select {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: #fff;
+        color: var(--ink);
+      }
+
+      .actions,
+      .links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      button,
+      .link-button {
+        border: 0;
+        border-radius: 999px;
+        padding: 12px 16px;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        transition: transform 0.18s ease, opacity 0.18s ease;
+      }
+
+      button:hover,
+      .link-button:hover {
+        transform: translateY(-1px);
+        opacity: 0.95;
+      }
+
+      button.primary,
+      .link-button.primary {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      button.secondary,
+      .link-button.secondary {
+        background: var(--accent-2);
+        color: #fff;
+      }
+
+      button.soft,
+      .link-button.soft {
+        background: var(--panel-strong);
+        color: var(--ink);
+      }
+
+      pre {
+        margin: 0;
+        white-space: pre-wrap;
+        word-break: break-word;
+        background: #182224;
+        color: #e9f0ef;
+        padding: 16px;
+        border-radius: 16px;
+        min-height: 180px;
+        overflow: auto;
+      }
+
+      .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .pill {
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(46, 106, 99, 0.1);
+        color: var(--accent-2);
+        font-size: 0.9rem;
+        font-weight: 700;
+      }
+
+      .session-box {
+        border-radius: 16px;
+        background: #fff;
+        border: 1px dashed var(--border);
+        padding: 14px;
+        margin-top: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <section class="hero">
+        <div class="eyebrow">Local Observability Playground</div>
+        <h1>SRE Learning Lab Control Panel</h1>
+        <p>
+          Generate healthy traffic, inject latency, burn error budget, and watch the stack react across
+          metrics, logs, and traces.
+        </p>
+        <div class="pill-row">
+          <div class="pill">app-a -> app-b -> app-c</div>
+          <div class="pill">Golden Signals</div>
+          <div class="pill">SLI / SLO / Error Budget</div>
+          <div class="pill">Capacity Testing</div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card">
+          <h2>Traffic Generator</h2>
+          <label for="items">Items</label>
+          <input id="items" type="number" min="1" value="2" />
+
+          <label for="latencyMs">App-A Latency (ms)</label>
+          <input id="latencyMs" type="number" min="0" value="50" />
+
+          <label for="dependencyLatencyMs">Dependency Latency (ms)</label>
+          <input id="dependencyLatencyMs" type="number" min="0" value="70" />
+
+          <label for="cpuMs">CPU Work (ms)</label>
+          <input id="cpuMs" type="number" min="0" value="10" />
+
+          <label for="dbDelayMs">DB Delay (ms)</label>
+          <input id="dbDelayMs" type="number" min="0" value="0" />
+
+          <label for="dbHoldMs">DB Hold (ms)</label>
+          <input id="dbHoldMs" type="number" min="0" value="0" />
+
+          <label for="dbFailureMode">DB Failure Mode</label>
+          <select id="dbFailureMode">
+            <option value="none">None</option>
+            <option value="before-query">Fail Before Query</option>
+            <option value="after-hold">Fail After Hold</option>
+          </select>
+
+          <label for="failureRate">Failure Rate</label>
+          <input id="failureRate" type="number" min="0" max="1" step="0.05" value="0" />
+
+          <div class="actions">
+            <button class="primary" id="sendOnce">Send One Request</button>
+            <button class="secondary" id="burst10">Burst x10</button>
+            <button class="soft" id="clearOutput">Clear Output</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Preset Scenarios</h2>
+          <p>Use these buttons to quickly generate recognizable behavior in the dashboards.</p>
+          <div class="actions">
+            <button class="soft preset" data-latency="40" data-dependency="30" data-cpu="5" data-dbdelay="0" data-dbhold="0" data-dbfailure="none" data-failure="0">Baseline</button>
+            <button class="soft preset" data-latency="140" data-dependency="180" data-cpu="25" data-dbdelay="120" data-dbhold="0" data-dbfailure="none" data-failure="0">Latency</button>
+            <button class="soft preset" data-latency="60" data-dependency="60" data-cpu="5" data-dbdelay="0" data-dbhold="0" data-dbfailure="none" data-failure="0.2">Errors</button>
+            <button class="soft preset" data-latency="120" data-dependency="160" data-cpu="80" data-dbdelay="250" data-dbhold="180" data-dbfailure="none" data-failure="0.05">Stress</button>
+            <button class="soft preset" data-latency="30" data-dependency="20" data-cpu="5" data-dbdelay="400" data-dbhold="0" data-dbfailure="none" data-failure="0">Slow Query</button>
+            <button class="soft preset" data-latency="20" data-dependency="20" data-cpu="5" data-dbdelay="0" data-dbhold="1500" data-dbfailure="none" data-failure="0">Pool Stress</button>
+            <button class="soft preset" data-latency="20" data-dependency="20" data-cpu="5" data-dbdelay="0" data-dbhold="1000" data-dbfailure="after-hold" data-failure="0">DB Failure</button>
+          </div>
+
+          <div class="links">
+            <a class="link-button primary" href="http://localhost:3000/d/sre-golden-signals/sre-golden-signals" target="_blank" rel="noreferrer">Open Golden Signals</a>
+            <a class="link-button secondary" href="http://localhost:3000/d/slo-error-budget/slo-error-budget" target="_blank" rel="noreferrer">Open SLO Dashboard</a>
+            <a class="link-button secondary" href="http://localhost:3000/d/capacity-planning/capacity-planning" target="_blank" rel="noreferrer">Open Capacity Dashboard</a>
+            <a class="link-button soft" href="http://localhost:3000/d/service-dependency-overview/service-dependency-overview" target="_blank" rel="noreferrer">Open Dependency View</a>
+            <a class="link-button soft" href="http://localhost:16686" target="_blank" rel="noreferrer">Open Jaeger</a>
+            <a class="link-button soft" href="http://localhost:8080" target="_blank" rel="noreferrer">Open Dozzle</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card">
+          <h2>Live Health Snapshot</h2>
+          <div class="pill-row">
+            <div class="pill" id="rpmPill">0 req/min</div>
+            <div class="pill" id="successPill">100% success</div>
+            <div class="pill" id="latencyPill">0 ms p95</div>
+          </div>
+          <div class="actions">
+            <button class="secondary" id="autoRun">Start Auto Run</button>
+            <button class="soft" id="stopAutoRun">Stop Auto Run</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Direct Tools</h2>
+          <p>Use these when you want a dedicated experience beyond the browser control panel.</p>
+          <div class="links">
+            <a class="link-button primary" href="http://localhost:16686/search" target="_blank" rel="noreferrer">Jaeger Trace Search</a>
+            <a class="link-button secondary" href="http://localhost:8080" target="_blank" rel="noreferrer">Dozzle Live Logs</a>
+            <a class="link-button soft" href="http://localhost:3000/explore" target="_blank" rel="noreferrer">Grafana Explore</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Learn / Play Demo</h2>
+          <label for="sessionDuration">Run Time (minutes)</label>
+          <input id="sessionDuration" type="number" min="1" max="60" value="15" />
+
+          <label for="sessionScenario">Scenario</label>
+          <select id="sessionScenario">
+            <option value="guided">Guided Mix</option>
+            <option value="baseline">Baseline</option>
+            <option value="latency">Latency</option>
+            <option value="errors">Errors</option>
+            <option value="stress">Stress</option>
+            <option value="slowdb">Slow Query</option>
+            <option value="pool">Pool Stress</option>
+          </select>
+
+          <div class="actions">
+            <button class="primary" id="startSession">Start Demo Run</button>
+            <button class="soft" id="stopSession">Stop Demo Run</button>
+          </div>
+
+          <div class="session-box" id="sessionSummary">
+            No active guided session.
+          </div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card">
+          <h2>Latency Trend</h2>
+          <svg id="latencyChart" viewBox="0 0 360 140" width="100%" height="180" role="img" aria-label="Latency chart"></svg>
+        </div>
+
+        <div class="card">
+          <h2>Error Trend</h2>
+          <svg id="errorChart" viewBox="0 0 360 140" width="100%" height="180" role="img" aria-label="Error chart"></svg>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card" style="grid-column: 1 / -1;">
+          <h2>Live Response Output</h2>
+          <pre id="output">Ready. Send a request to start observing the system.</pre>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      const fields = {
+        items: document.getElementById("items"),
+        latencyMs: document.getElementById("latencyMs"),
+        dependencyLatencyMs: document.getElementById("dependencyLatencyMs"),
+        cpuMs: document.getElementById("cpuMs"),
+        dbDelayMs: document.getElementById("dbDelayMs"),
+        dbHoldMs: document.getElementById("dbHoldMs"),
+        dbFailureMode: document.getElementById("dbFailureMode"),
+        failureRate: document.getElementById("failureRate")
+      };
+
+      const output = document.getElementById("output");
+      const rpmPill = document.getElementById("rpmPill");
+      const successPill = document.getElementById("successPill");
+      const latencyPill = document.getElementById("latencyPill");
+      const latencyChart = document.getElementById("latencyChart");
+      const errorChart = document.getElementById("errorChart");
+      const sessionSummary = document.getElementById("sessionSummary");
+      let autoRunHandle = null;
+      let sessionHandle = null;
+      let activeSession = null;
+      let lastSessionReport = null;
+
+      function currentParams() {
+        return {
+          items: fields.items.value,
+          latencyMs: fields.latencyMs.value,
+          dependencyLatencyMs: fields.dependencyLatencyMs.value,
+          cpuMs: fields.cpuMs.value,
+          dbDelayMs: fields.dbDelayMs.value,
+          dbHoldMs: fields.dbHoldMs.value,
+          dbFailureMode: fields.dbFailureMode.value,
+          failureRate: fields.failureRate.value
+        };
+      }
+
+      function appendOutput(title, payload) {
+        const stamp = new Date().toLocaleTimeString();
+        const block = `[${stamp}] ${title}\n${typeof payload === "string" ? payload : JSON.stringify(payload, null, 2)}\n\n`;
+        output.textContent = block + output.textContent;
+      }
+
+      function renderSparkline(svg, points, valueAccessor, color, maxFallback = 1) {
+        const width = 360;
+        const height = 140;
+        const padding = 12;
+        const max = Math.max(maxFallback, ...points.map(valueAccessor), 1);
+
+        const coords = points.map((point, index) => {
+          const x = padding + ((width - padding * 2) * index) / Math.max(points.length - 1, 1);
+          const y = height - padding - ((height - padding * 2) * valueAccessor(point)) / max;
+          return `${x},${y}`;
+        });
+
+        svg.innerHTML = `
+          <rect x="0" y="0" width="${width}" height="${height}" rx="18" fill="#182224"></rect>
+          <line x1="${padding}" y1="${height - padding}" x2="${width - padding}" y2="${height - padding}" stroke="#314346" stroke-width="1"></line>
+          <polyline fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" points="${coords.join(" ")}"></polyline>
+        `;
+      }
+
+      async function refreshStats() {
+        const response = await fetch("/api/stats");
+        const body = await response.json();
+        const summary = body.summary;
+
+        rpmPill.textContent = `${summary.requests_last_minute} req/min`;
+        successPill.textContent = `${Math.round(summary.success_rate * 100)}% success`;
+        latencyPill.textContent = `${summary.p95_latency_ms} ms p95`;
+
+        const requestPoints = body.recent_requests.length === 0
+          ? [{ duration_ms: 0, statusCode: 200 }]
+          : body.recent_requests;
+
+        renderSparkline(latencyChart, requestPoints, (point) => point.duration_ms, "#f29f67", 200);
+        renderSparkline(errorChart, requestPoints, (point) => point.statusCode >= 500 ? 1 : 0, "#e26d5a", 1);
+      }
+
+      async function sendRequest() {
+        const params = new URLSearchParams(currentParams());
+        const response = await fetch(`/api/demo?${params.toString()}`);
+        const body = await response.json();
+        appendOutput(`HTTP ${response.status}`, body);
+        refreshStats().catch((error) => appendOutput("Stats refresh failed", error.message));
+      }
+
+      async function burstRequests(count) {
+        appendOutput("Burst started", { count, params: currentParams() });
+        for (let i = 0; i < count; i += 1) {
+          sendRequest().catch((error) => appendOutput("Request failed", error.message));
+          await new Promise((resolve) => setTimeout(resolve, 180));
+        }
+      }
+
+      function applyPresetFromName(name) {
+        const presets = {
+          baseline: { latencyMs: 40, dependencyLatencyMs: 30, cpuMs: 5, dbDelayMs: 0, dbHoldMs: 0, dbFailureMode: "none", failureRate: 0 },
+          latency: { latencyMs: 140, dependencyLatencyMs: 180, cpuMs: 25, dbDelayMs: 120, dbHoldMs: 0, dbFailureMode: "none", failureRate: 0 },
+          errors: { latencyMs: 60, dependencyLatencyMs: 60, cpuMs: 5, dbDelayMs: 0, dbHoldMs: 0, dbFailureMode: "none", failureRate: 0.2 },
+          stress: { latencyMs: 120, dependencyLatencyMs: 160, cpuMs: 80, dbDelayMs: 250, dbHoldMs: 180, dbFailureMode: "none", failureRate: 0.05 },
+          slowdb: { latencyMs: 30, dependencyLatencyMs: 20, cpuMs: 5, dbDelayMs: 400, dbHoldMs: 0, dbFailureMode: "none", failureRate: 0 },
+          pool: { latencyMs: 20, dependencyLatencyMs: 20, cpuMs: 5, dbDelayMs: 0, dbHoldMs: 1500, dbFailureMode: "none", failureRate: 0 }
+        };
+
+        const preset = presets[name] || presets.baseline;
+        Object.entries(preset).forEach(([key, value]) => {
+          fields[key].value = String(value);
+        });
+      }
+
+      function updateSessionSummary(extra = {}) {
+        if (!activeSession) {
+          if (lastSessionReport) {
+            sessionSummary.textContent = [
+              `Last report: ${lastSessionReport.scenario}`,
+              `Duration planned: ${lastSessionReport.duration_minutes} min`,
+              `Requests triggered: ${lastSessionReport.requests_triggered}`,
+              `Failures observed: ${lastSessionReport.failures_observed}`,
+              `Final success rate: ${lastSessionReport.final_summary.success_rate_percent}%`,
+              `Final p95 latency: ${lastSessionReport.final_summary.p95_latency_ms} ms`
+            ].join("\n");
+          } else {
+            sessionSummary.textContent = "No active guided session.";
+          }
+          return;
+        }
+
+        const elapsedMs = Date.now() - activeSession.startedAt;
+        const elapsedMinutes = (elapsedMs / 60000).toFixed(1);
+        const durationMinutes = activeSession.durationMinutes;
+        const lines = [
+          `Scenario: ${activeSession.scenarioLabel}`,
+          `Elapsed: ${elapsedMinutes} / ${durationMinutes} min`,
+          `Requests triggered: ${activeSession.requests}`,
+          `Failures observed in browser: ${activeSession.failures}`,
+          `Last phase: ${activeSession.lastPhase || "warming up"}`
+        ];
+
+        if (extra.summary) {
+          lines.push(`Requests in app-a 5m window: ${extra.summary.total_requests}`);
+          lines.push(`Success rate: ${Math.round(extra.summary.success_rate * 100)}%`);
+          lines.push(`p95 latency: ${extra.summary.p95_latency_ms} ms`);
+        }
+
+        sessionSummary.textContent = lines.join("\n");
+      }
+
+      function downloadJson(filename, data) {
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = filename;
+        anchor.click();
+        URL.revokeObjectURL(url);
+      }
+
+      async function stopGuidedSession(reason) {
+        if (sessionHandle) {
+          clearInterval(sessionHandle);
+          sessionHandle = null;
+        }
+
+        if (activeSession) {
+          let finalSummary = {
+            total_requests: 0,
+            success_rate: 1,
+            error_rate: 0,
+            requests_last_minute: 0,
+            avg_latency_ms: 0,
+            p95_latency_ms: 0
+          };
+
+          try {
+            const response = await fetch("/api/stats");
+            const body = await response.json();
+            finalSummary = body.summary;
+          } catch (_) {
+            // Keep the fallback summary when stats are temporarily unavailable.
+          }
+
+          lastSessionReport = {
+            generated_at: new Date().toISOString(),
+            reason,
+            scenario: activeSession.scenarioLabel,
+            duration_minutes: activeSession.durationMinutes,
+            requests_triggered: activeSession.requests,
+            failures_observed: activeSession.failures,
+            phases: activeSession.phases.map((phase) => phase.name),
+            samples: activeSession.samples,
+            final_summary: {
+              total_requests: finalSummary.total_requests,
+              success_rate_percent: Math.round(finalSummary.success_rate * 100),
+              error_rate_percent: Math.round(finalSummary.error_rate * 100),
+              requests_last_minute: finalSummary.requests_last_minute,
+              avg_latency_ms: finalSummary.avg_latency_ms,
+              p95_latency_ms: finalSummary.p95_latency_ms
+            }
+          };
+
+          appendOutput("Guided session stopped", { reason, requests: activeSession.requests, failures: activeSession.failures });
+          activeSession = null;
+        }
+
+        updateSessionSummary();
+      }
+
+      async function tickGuidedSession() {
+        if (!activeSession) {
+          return;
+        }
+
+        const elapsedMs = Date.now() - activeSession.startedAt;
+        const phaseIndex = activeSession.scenario === "guided"
+          ? Math.min(activeSession.phases.length - 1, Math.floor(elapsedMs / activeSession.phaseLengthMs))
+          : 0;
+        const phase = activeSession.phases[phaseIndex];
+
+        activeSession.lastPhase = phase.name;
+        applyPresetFromName(phase.preset);
+
+        try {
+          await sendRequest();
+          activeSession.requests += 1;
+        } catch (_) {
+          activeSession.failures += 1;
+        }
+
+        try {
+          const response = await fetch("/api/stats");
+          const body = await response.json();
+          activeSession.samples.push({
+            timestamp: new Date().toISOString(),
+            phase: phase.name,
+            summary: body.summary,
+            params: currentParams()
+          });
+          updateSessionSummary({ summary: body.summary });
+        } catch (_) {
+          updateSessionSummary();
+        }
+
+        if (elapsedMs >= activeSession.durationMinutes * 60 * 1000) {
+          stopGuidedSession("planned duration completed");
+        }
+      }
+
+      document.getElementById("sendOnce").addEventListener("click", () => {
+        sendRequest().catch((error) => appendOutput("Request failed", error.message));
+      });
+
+      document.getElementById("burst10").addEventListener("click", () => {
+        burstRequests(10);
+      });
+
+      document.getElementById("clearOutput").addEventListener("click", () => {
+        output.textContent = "Output cleared.";
+      });
+
+      document.getElementById("autoRun").addEventListener("click", () => {
+        if (autoRunHandle) {
+          return;
+        }
+
+        appendOutput("Auto run started", currentParams());
+        autoRunHandle = setInterval(() => {
+          sendRequest().catch((error) => appendOutput("Request failed", error.message));
+        }, 1400);
+      });
+
+      document.getElementById("stopAutoRun").addEventListener("click", () => {
+        if (autoRunHandle) {
+          clearInterval(autoRunHandle);
+          autoRunHandle = null;
+          appendOutput("Auto run stopped", "No more scheduled requests.");
+        }
+      });
+
+      document.getElementById("startSession").addEventListener("click", () => {
+        stopGuidedSession("restarted");
+
+        const durationMinutes = Number(document.getElementById("sessionDuration").value || 15);
+        const scenario = document.getElementById("sessionScenario").value;
+        const scenarioLabel = document.getElementById("sessionScenario").selectedOptions[0].textContent;
+        const phases = scenario === "guided"
+          ? [
+              { name: "Baseline warm-up", preset: "baseline" },
+              { name: "Latency pressure", preset: "latency" },
+              { name: "DB slow query", preset: "slowdb" },
+              { name: "Error burn", preset: "errors" },
+              { name: "Pool saturation", preset: "pool" },
+              { name: "Stress blend", preset: "stress" }
+            ]
+          : [{ name: scenarioLabel, preset: scenario }];
+
+        activeSession = {
+          durationMinutes,
+          scenario,
+          scenarioLabel,
+          startedAt: Date.now(),
+          phaseLengthMs: Math.max(60000, (durationMinutes * 60 * 1000) / phases.length),
+          phases,
+          requests: 0,
+          failures: 0,
+          lastPhase: null,
+          samples: []
+        };
+
+        appendOutput("Guided session started", {
+          durationMinutes,
+          scenario: scenarioLabel
+        });
+        updateSessionSummary();
+        sessionHandle = setInterval(() => {
+          tickGuidedSession().catch((error) => appendOutput("Guided session tick failed", error.message));
+        }, 1800);
+      });
+
+      document.getElementById("stopSession").addEventListener("click", () => {
+        stopGuidedSession("stopped by user");
+      });
+
+      const exportButton = document.createElement("button");
+      exportButton.className = "soft";
+      exportButton.textContent = "Download Session Report";
+      exportButton.addEventListener("click", () => {
+        if (!lastSessionReport) {
+          appendOutput("Session report", "No completed session report is available yet.");
+          return;
+        }
+
+        const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+        downloadJson(`sre-session-report-${stamp}.json`, lastSessionReport);
+      });
+      document.querySelector(".card #stopSession").parentElement.appendChild(exportButton);
+
+      document.querySelectorAll(".preset").forEach((button) => {
+        button.addEventListener("click", () => {
+          fields.latencyMs.value = button.dataset.latency;
+          fields.dependencyLatencyMs.value = button.dataset.dependency;
+          fields.cpuMs.value = button.dataset.cpu;
+          fields.dbDelayMs.value = button.dataset.dbdelay;
+          fields.dbHoldMs.value = button.dataset.dbhold;
+          fields.dbFailureMode.value = button.dataset.dbfailure;
+          fields.failureRate.value = button.dataset.failure;
+          appendOutput("Preset selected", {
+            latencyMs: button.dataset.latency,
+            dependencyLatencyMs: button.dataset.dependency,
+            cpuMs: button.dataset.cpu,
+            dbDelayMs: button.dataset.dbdelay,
+            dbHoldMs: button.dataset.dbhold,
+            dbFailureMode: button.dataset.dbfailure,
+            failureRate: button.dataset.failure
+          });
+          refreshStats().catch((error) => appendOutput("Stats refresh failed", error.message));
+        });
+      });
+
+      refreshStats().catch((error) => appendOutput("Stats refresh failed", error.message));
+      setInterval(() => {
+        refreshStats().catch(() => {});
+      }, 4000);
+    </script>
+  </body>
+</html>

@@ -137,59 +137,23 @@ Use `app-a` as the entry point:
 
 Example:
 
-PowerShell:
-
 ```powershell
 curl "http://localhost:3001/api/demo?items=3&latencyMs=100"
 ```
-
-Bash:
-
-```bash
-curl "http://localhost:3001/api/demo?items=3&latencyMs=100"
-```
-
 To simulate failures:
 
-PowerShell:
-
 ```powershell
 curl "http://localhost:3001/api/demo?failureRate=0.4"
 ```
-
-Bash:
-
-```bash
-curl "http://localhost:3001/api/demo?failureRate=0.4"
-```
-
 To simulate extra CPU work:
-
-PowerShell:
-
 ```powershell
 curl "http://localhost:3001/api/demo?cpuMs=150"
 ```
-
-Bash:
-
-```bash
-curl "http://localhost:3001/api/demo?cpuMs=150"
-```
-
 To simulate deeper dependency latency:
-
-PowerShell:
-
 ```powershell
 curl "http://localhost:3001/api/demo?dependencyLatencyMs=120"
 ```
 
-Bash:
-
-```bash
-curl "http://localhost:3001/api/demo?dependencyLatencyMs=120"
-```
 ## Screenshots
 
 ### Browser Control Panel
